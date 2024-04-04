@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+// Define the Task type
 type Priority = 'p1' | 'p2' | 'p3';
 
 type Task = {
@@ -10,7 +11,8 @@ type Task = {
 };
 
 function App() {
-  const [tasks, setTasks] = React.useState<Task[]>([
+  // Initialize tasks state
+  const [tasks, setTasks] = useState<Task[]>([
     {
       id: 1,
       title: 'Learn React',
@@ -19,8 +21,10 @@ function App() {
     },
   ]);
 
-  const [taskName, setTaskName] = React.useState('');
+  // Initialize taskName state for input field
+  const [taskName, setTaskName] = useState('');
 
+  // Add a new task
   const onAddTask = () => {
     setTasks([
       ...tasks,
@@ -30,6 +34,21 @@ function App() {
         isCompleted: false,
       },
     ]);
+    setTaskName(''); // Clear input field after adding task
+  };
+
+  // Edit a task
+  const onEditTask = (taskId: number, newTitle: string) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, title: newTitle } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  // Delete a task
+  const onDeleteTask = (taskId: number) => {
+    const filteredTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(filteredTasks);
   };
 
   return (
@@ -44,7 +63,11 @@ function App() {
       <button onClick={onAddTask}>Add</button>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id}>{task.title}</li>
+          <li key={task.id}>
+            {task.title}{' '}
+            <button onClick={() => onEditTask(task.id, prompt('Enter new title:'))}>Edit</button>
+            <button onClick={() => onDeleteTask(task.id)}>Delete</button>
+          </li>
         ))}
       </ul>
     </div>
